@@ -1,9 +1,9 @@
-const logger = require('../utils/logger.util');
+import logger from '../utils/logger.util.js';
 
 /**
  * Background OTP expiration cleanup job
  */
-const cleanupExpiredOTPs = async () => {
+export const cleanupExpiredOTPs = async () => {
   try {
     logger.info('Running background job to prune expired OTP records');
     // Logic for deleting expired OTP docs from database
@@ -13,6 +13,6 @@ const cleanupExpiredOTPs = async () => {
   }
 };
 
-module.exports = {
+export default {
   cleanupExpiredOTPs,
 };

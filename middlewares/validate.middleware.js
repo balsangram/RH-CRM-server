@@ -1,4 +1,4 @@
-const BadRequestError = require('../shared/errors/bad-request.error');
+import BadRequestError from '../shared/errors/bad-request.error.js';
 
 /**
  * Request validation middleware using Joi
@@ -28,4 +28,5 @@ const validate = (schema, source = 'body') => {
   };
 };
 
-module.exports = validate;
+export default validate;
+export { validate };

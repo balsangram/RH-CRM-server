@@ -1,8 +1,8 @@
-const nodemailer = require('nodemailer');
-const mailerConfig = require('../config/mailer.config');
-const logger = require('./logger.util');
+import nodemailer from 'nodemailer';
+import mailerConfig from '../config/mailer.config.js';
+import logger from './logger.util.js';
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
   host: mailerConfig.host,
   port: mailerConfig.port,
   secure: mailerConfig.secure,
@@ -21,7 +21,7 @@ const transporter = nodemailer.createTransport({
  * @param {string} [options.html]
  * @param {Array} [options.attachments]
  */
-const sendEmail = async ({ to, subject, text, html, attachments = [] }) => {
+export const sendEmail = async ({ to, subject, text, html, attachments = [] }) => {
   try {
     const mailOptions = {
       from: mailerConfig.from,
@@ -41,7 +41,7 @@ const sendEmail = async ({ to, subject, text, html, attachments = [] }) => {
   }
 };
 
-module.exports = {
+export default {
   transporter,
   sendEmail,
 };

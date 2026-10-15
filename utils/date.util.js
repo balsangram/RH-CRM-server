@@ -2,7 +2,7 @@
  * Date and time helper utilities
  */
 
-const formatDate = (date = new Date(), locale = 'en-US', options = {}) => {
+export const formatDate = (date = new Date(), locale = 'en-US', options = {}) => {
   const d = new Date(date);
   return d.toLocaleDateString(locale, {
     year: 'numeric',
@@ -12,23 +12,23 @@ const formatDate = (date = new Date(), locale = 'en-US', options = {}) => {
   });
 };
 
-const formatDateTime = (date = new Date()) => {
+export const formatDateTime = (date = new Date()) => {
   const d = new Date(date);
   return d.toISOString();
 };
 
-const addDays = (date = new Date(), days = 0) => {
+export const addDays = (date = new Date(), days = 0) => {
   const result = new Date(date);
   result.setDate(result.getDate() + days);
   return result;
 };
 
-const isExpired = (expiryDate) => {
+export const isExpired = (expiryDate) => {
   if (!expiryDate) return false;
   return new Date() > new Date(expiryDate);
 };
 
-module.exports = {
+export default {
   formatDate,
   formatDateTime,
   addDays,

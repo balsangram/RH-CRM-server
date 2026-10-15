@@ -3,7 +3,7 @@
  * @param {object} query
  * @param {number} defaultLimit
  */
-const getPagination = (query, defaultLimit = 10) => {
+export const getPagination = (query, defaultLimit = 10) => {
   const page = Math.max(1, parseInt(query.page || '1', 10));
   const limit = Math.max(1, Math.min(100, parseInt(query.limit || String(defaultLimit), 10)));
   const skip = (page - 1) * limit;
@@ -22,7 +22,7 @@ const getPagination = (query, defaultLimit = 10) => {
  * @param {number} page
  * @param {number} limit
  */
-const formatPaginatedResult = (data, totalCount, page, limit) => {
+export const formatPaginatedResult = (data, totalCount, page, limit) => {
   const totalPages = Math.ceil(totalCount / limit) || 1;
 
   return {
@@ -38,7 +38,7 @@ const formatPaginatedResult = (data, totalCount, page, limit) => {
   };
 };
 
-module.exports = {
+export default {
   getPagination,
   formatPaginatedResult,
 };

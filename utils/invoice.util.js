@@ -1,13 +1,13 @@
-const PDFDocument = require('pdfkit');
-const { uploadToS3 } = require('./file.util');
-const logger = require('./logger.util');
+import PDFDocument from 'pdfkit';
+import { uploadToS3 } from './file.util.js';
+import logger from './logger.util.js';
 
 /**
  * Generate a PDF invoice Buffer using PDFKit
  * @param {object} invoiceData
  * @returns {Promise<Buffer>}
  */
-const generateInvoicePDFBuffer = (invoiceData) => {
+export const generateInvoicePDFBuffer = (invoiceData) => {
   return new Promise((resolve, reject) => {
     try {
       const doc = new PDFDocument({ margin: 50 });
@@ -63,7 +63,7 @@ const generateInvoicePDFBuffer = (invoiceData) => {
  * @param {string} s3Key
  * @returns {Promise<{ key: string, location: string, bucket: string }>}
  */
-const generateAndUploadInvoice = async (invoiceData, s3Key) => {
+export const generateAndUploadInvoice = async (invoiceData, s3Key) => {
   try {
     const pdfBuffer = await generateInvoicePDFBuffer(invoiceData);
     const uploadResult = await uploadToS3(pdfBuffer, s3Key, 'application/pdf');
@@ -75,7 +75,7 @@ const generateAndUploadInvoice = async (invoiceData, s3Key) => {
   }
 };
 
-module.exports = {
+export default {
   generateInvoicePDFBuffer,
   generateAndUploadInvoice,
 };

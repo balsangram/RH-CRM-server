@@ -1,6 +1,6 @@
-const ApiError = require('./api.error');
-const HttpStatus = require('../constants/http-status.constants');
-const ErrorCodes = require('../constants/error-codes.constants');
+import ApiError from './api.error.js';
+import HttpStatus from '../constants/http-status.constants.js';
+import ErrorCodes from '../constants/error-codes.constants.js';
 
 class UnauthorizedError extends ApiError {
   constructor(message = 'Unauthorized access', details = null) {
@@ -8,4 +8,5 @@ class UnauthorizedError extends ApiError {
   }
 }
 
-module.exports = UnauthorizedError;
+export default UnauthorizedError;
+export { UnauthorizedError };

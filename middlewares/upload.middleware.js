@@ -1,9 +1,9 @@
-const multer = require('multer');
-const multerS3 = require('multer-s3');
-const path = require('path');
-const storageConfig = require('../config/storage.config');
-const { s3Client } = require('../utils/file.util');
-const BadRequestError = require('../shared/errors/bad-request.error');
+import multer from 'multer';
+import multerS3 from 'multer-s3';
+import path from 'path';
+import storageConfig from '../config/storage.config.js';
+import { s3Client } from '../utils/file.util.js';
+import BadRequestError from '../shared/errors/bad-request.error.js';
 
 /**
  * File filter to enforce allowed MIME types
@@ -28,7 +28,7 @@ const fileFilter = (req, file, cb) => {
  * Factory to create Multer S3 storage instance with custom folder partition
  * @param {string} folderPrefix
  */
-const createS3Uploader = (folderPrefix = 'documents') => {
+export const createS3Uploader = (folderPrefix = 'documents') => {
   return multer({
     storage: multerS3({
       s3: s3Client,
@@ -59,7 +59,7 @@ const createS3Uploader = (folderPrefix = 'documents') => {
 /**
  * In-memory storage uploader (useful when manual processing is needed before uploading to S3)
  */
-const memoryUploader = multer({
+export const memoryUploader = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: storageConfig.maxFileSizeBytes,
@@ -67,11 +67,16 @@ const memoryUploader = multer({
   fileFilter,
 });
 
-module.exports = {
+export const uploadDocument = createS3Uploader(storageConfig.folders.documents);
+export const uploadVisa = createS3Uploader(storageConfig.folders.visas);
+export const uploadInvoice = createS3Uploader(storageConfig.folders.invoices);
+export const uploadAvatar = createS3Uploader(storageConfig.folders.avatars);
+
+export default {
   createS3Uploader,
   memoryUploader,
-  uploadDocument: createS3Uploader(storageConfig.folders.documents),
-  uploadVisa: createS3Uploader(storageConfig.folders.visas),
-  uploadInvoice: createS3Uploader(storageConfig.folders.invoices),
-  uploadAvatar: createS3Uploader(storageConfig.folders.avatars),
+  uploadDocument,
+  uploadVisa,
+  uploadInvoice,
+  uploadAvatar,
 };

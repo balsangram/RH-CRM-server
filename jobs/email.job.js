@@ -1,10 +1,10 @@
-const { sendEmail } = require('../utils/email.util');
-const logger = require('../utils/logger.util');
+import { sendEmail } from '../utils/email.util.js';
+import logger from '../utils/logger.util.js';
 
 /**
  * Background email delivery job handler
  */
-const processEmailJob = async (jobData) => {
+export const processEmailJob = async (jobData) => {
   try {
     logger.info(`Processing background email job for: ${jobData.to}`);
     await sendEmail(jobData);
@@ -15,6 +15,6 @@ const processEmailJob = async (jobData) => {
   }
 };
 
-module.exports = {
+export default {
   processEmailJob,
 };

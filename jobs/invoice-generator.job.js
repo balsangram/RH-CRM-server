@@ -1,10 +1,10 @@
-const { generateAndUploadInvoice } = require('../utils/invoice.util');
-const logger = require('../utils/logger.util');
+import { generateAndUploadInvoice } from '../utils/invoice.util.js';
+import logger from '../utils/logger.util.js';
 
 /**
  * Background invoice PDF generation & AWS S3 upload job handler
  */
-const processInvoiceGenerationJob = async ({ invoiceData, s3Key }) => {
+export const processInvoiceGenerationJob = async ({ invoiceData, s3Key }) => {
   try {
     logger.info(`Starting invoice generation job for Invoice #${invoiceData.invoiceNumber}`);
     const result = await generateAndUploadInvoice(invoiceData, s3Key);
@@ -16,6 +16,6 @@ const processInvoiceGenerationJob = async ({ invoiceData, s3Key }) => {
   }
 };
 
-module.exports = {
+export default {
   processInvoiceGenerationJob,
 };

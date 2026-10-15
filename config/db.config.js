@@ -1,8 +1,13 @@
-module.exports = {
-  uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/rh_global_crm',
+import env from './env.config.js';
+
+const dbConfig = {
+  uri: env.database.uri,
+  debug: env.database.debug,
   options: {
-    autoIndex: process.env.NODE_ENV !== 'production',
+    autoIndex: !env.isProduction,
     serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
   },
 };
+
+export default dbConfig;
+export { dbConfig };

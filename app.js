@@ -1,24 +1,30 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const appConfig = require('./config/app.config');
-const requestLogger = require('./middlewares/request-logger.middleware');
-const rateLimiter = require('./middlewares/rate-limiter.middleware');
-const errorHandler = require('./middlewares/error-handler.middleware');
-const NotFoundError = require('./shared/errors/not-found.error');
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
+import appConfig from './config/app.config.js';
+import requestLogger from './middlewares/request-logger.middleware.js';
+import rateLimiter from './middlewares/rate-limiter.middleware.js';
+import errorHandler from './middlewares/error-handler.middleware.js';
+import NotFoundError from './shared/errors/not-found.error.js';
+
+import authRoutes from './modules/auth/auth.routes.js';
 
 const app = express();
 
 // Security HTTP headers
 app.use(helmet());
 
-// Enable CORS
+// Enable CORS with credentials for cookies
 app.use(
   cors({
     origin: appConfig.frontendUrl || '*',
     credentials: true,
   })
 );
+
+// Cookie parser middleware
+app.use(cookieParser());
 
 // Body parsers
 app.use(express.json({ limit: '10mb' }));
@@ -49,8 +55,8 @@ app.get(appConfig.apiPrefix, (req, res) => {
 });
 
 // Note: Domain module routes are plugged in here dynamically:
-// app.use(`${appConfig.apiPrefix}/auth`, require('./modules/auth/routes/auth.routes'));
-// app.use(`${appConfig.apiPrefix}/applications`, require('./modules/applications/routes/application.routes'));
+app.use(`${appConfig.apiPrefix}/auth`, authRoutes);
+// app.use(`${appConfig.apiPrefix}/applications`, applicationRoutes);
 // etc.
 
 // 404 Handler for undefined routes
@@ -61,4 +67,5 @@ app.use((req, res, next) => {
 // Centralized Global Error Handler
 app.use(errorHandler);
 
-module.exports = app;
+export default app;
+export { app };

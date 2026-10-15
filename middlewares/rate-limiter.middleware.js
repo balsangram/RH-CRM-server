@@ -1,7 +1,7 @@
-const rateLimit = require('express-rate-limit');
-const appConfig = require('../config/app.config');
-const HttpStatus = require('../shared/constants/http-status.constants');
-const ErrorCodes = require('../shared/constants/error-codes.constants');
+import rateLimit from 'express-rate-limit';
+import appConfig from '../config/app.config.js';
+import HttpStatus from '../shared/constants/http-status.constants.js';
+import ErrorCodes from '../shared/constants/error-codes.constants.js';
 
 const rateLimiter = rateLimit({
   windowMs: appConfig.rateLimit.windowMs,
@@ -16,4 +16,5 @@ const rateLimiter = rateLimit({
   statusCode: HttpStatus.TOO_MANY_REQUESTS,
 });
 
-module.exports = rateLimiter;
+export default rateLimiter;
+export { rateLimiter };

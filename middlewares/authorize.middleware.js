@@ -1,4 +1,4 @@
-const ForbiddenError = require('../shared/errors/forbidden.error');
+import ForbiddenError from '../shared/errors/forbidden.error.js';
 
 /**
  * Role-based authorization middleware
@@ -22,4 +22,5 @@ const authorize = (...allowedRoles) => {
   };
 };
 
-module.exports = authorize;
+export default authorize;
+export { authorize };

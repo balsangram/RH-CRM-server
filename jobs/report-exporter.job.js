@@ -1,9 +1,9 @@
-const logger = require('../utils/logger.util');
+import logger from '../utils/logger.util.js';
 
 /**
  * Background async report exporter job
  */
-const exportReportJob = async ({ reportType, filters, requestedByEmail }) => {
+export const exportReportJob = async ({ reportType, filters, requestedByEmail }) => {
   try {
     logger.info(`Starting async report generation for type: ${reportType}`);
     // Generate CSV/Excel report, upload to S3, and email download link
@@ -13,6 +13,6 @@ const exportReportJob = async ({ reportType, filters, requestedByEmail }) => {
   }
 };
 
-module.exports = {
+export default {
   exportReportJob,
 };

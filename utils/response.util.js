@@ -1,9 +1,9 @@
-const HttpStatus = require('../shared/constants/http-status.constants');
+import HttpStatus from '../shared/constants/http-status.constants.js';
 
 /**
  * Standard API Success Response
  */
-const success = (res, message = 'Success', data = {}, statusCode = HttpStatus.OK, meta = null) => {
+export const success = (res, message = 'Success', data = {}, statusCode = HttpStatus.OK, meta = null) => {
   const payload = {
     success: true,
     message,
@@ -20,14 +20,14 @@ const success = (res, message = 'Success', data = {}, statusCode = HttpStatus.OK
 /**
  * Standard API Created Response
  */
-const created = (res, message = 'Resource created successfully', data = {}, meta = null) => {
+export const created = (res, message = 'Resource created successfully', data = {}, meta = null) => {
   return success(res, message, data, HttpStatus.CREATED, meta);
 };
 
 /**
  * Standard API Error Response
  */
-const error = (
+export const error = (
   res,
   message = 'An unexpected error occurred',
   statusCode = HttpStatus.INTERNAL_SERVER_ERROR,
@@ -47,7 +47,7 @@ const error = (
   return res.status(statusCode).json(payload);
 };
 
-module.exports = {
+export default {
   success,
   created,
   error,

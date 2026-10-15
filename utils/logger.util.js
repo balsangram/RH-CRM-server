@@ -1,5 +1,9 @@
-const winston = require('winston');
-const path = require('path');
+import winston from 'winston';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const levels = {
   error: 0,
@@ -45,4 +49,5 @@ const logger = winston.createLogger({
   transports,
 });
 
-module.exports = logger;
+export default logger;
+export { logger };

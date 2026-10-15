@@ -10,4 +10,5 @@ const ErrorCodes = Object.freeze({
   BAD_REQUEST: 'BAD_REQUEST',
 });
 
-module.exports = ErrorCodes;
+export default ErrorCodes;
+export { ErrorCodes };

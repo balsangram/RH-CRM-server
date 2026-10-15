@@ -1,10 +1,9 @@
 const Roles = Object.freeze({
   SUPER_ADMIN: 'SUPER_ADMIN',
-  ADMIN: 'ADMIN',
-  MANAGER: 'MANAGER',
-  AGENT: 'AGENT',
-  ACCOUNTANT: 'ACCOUNTANT',
-  CLIENT: 'CLIENT',
+  STAFF: 'STAFF',
+  COMPANY: 'COMPANY',
+  INDIVIDUAL: 'INDIVIDUAL',
 });
 
-module.exports = Roles;
+export default Roles;
+export { Roles };

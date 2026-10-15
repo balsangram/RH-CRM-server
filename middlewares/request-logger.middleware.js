@@ -1,5 +1,5 @@
-const morgan = require('morgan');
-const logger = require('../utils/logger.util');
+import morgan from 'morgan';
+import logger from '../utils/logger.util.js';
 
 const stream = {
   write: (message) => logger.http(message.trim()),
@@ -15,4 +15,5 @@ const requestLogger = morgan(
   { stream, skip }
 );
 
-module.exports = requestLogger;
+export default requestLogger;
+export { requestLogger };

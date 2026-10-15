@@ -1,6 +1,6 @@
-const ApiError = require('./api.error');
-const HttpStatus = require('../constants/http-status.constants');
-const ErrorCodes = require('../constants/error-codes.constants');
+import ApiError from './api.error.js';
+import HttpStatus from '../constants/http-status.constants.js';
+import ErrorCodes from '../constants/error-codes.constants.js';
 
 class BadRequestError extends ApiError {
   constructor(message = 'Bad Request', details = null) {
@@ -8,4 +8,5 @@ class BadRequestError extends ApiError {
   }
 }
 
-module.exports = BadRequestError;
+export default BadRequestError;
+export { BadRequestError };

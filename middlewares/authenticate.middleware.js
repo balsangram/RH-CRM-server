@@ -1,6 +1,6 @@
-const jwt = require('jsonwebtoken');
-const jwtConfig = require('../config/jwt.config');
-const UnauthorizedError = require('../shared/errors/unauthorized.error');
+import jwt from 'jsonwebtoken';
+import jwtConfig from '../config/jwt.config.js';
+import UnauthorizedError from '../shared/errors/unauthorized.error.js';
 
 /**
  * Middleware to verify JWT Access Token
@@ -28,4 +28,5 @@ const authenticate = (req, res, next) => {
   }
 };
 
-module.exports = authenticate;
+export default authenticate;
+export { authenticate };

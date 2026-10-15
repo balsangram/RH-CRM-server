@@ -1,6 +1,6 @@
-const logger = require('../utils/logger.util');
-const response = require('../utils/response.util');
-const HttpStatus = require('../shared/constants/http-status.constants');
+import logger from '../utils/logger.util.js';
+import response from '../utils/response.util.js';
+import HttpStatus from '../shared/constants/http-status.constants.js';
 
 /**
  * Global centralized error-handling middleware
@@ -47,4 +47,5 @@ const errorHandler = (err, req, res, next) => {
   return response.error(res, message, statusCode, errorCode, details);
 };
 
-module.exports = errorHandler;
+export default errorHandler;
+export { errorHandler };
