@@ -26,8 +26,35 @@ import {
   outsiderLogoutService,
   outsiderRefreshService,
 } from "./auth.service.js";
+import jwtConfig from "../../config/jwt.config.js";
 
 const isProduction = process.env.NODE_ENV === "production";
+
+/**
+ * Convert duration string (e.g. '1d', '15m', '7d') to milliseconds
+ */
+const parseDurationToMs = (duration, defaultMs = 15 * 60 * 1000) => {
+  if (!duration) return defaultMs;
+  if (typeof duration === "number") return duration;
+  const match = String(duration).trim().match(/^(\d+)([smhdwy])$/i);
+  if (!match) return defaultMs;
+  const val = parseInt(match[1], 10);
+  const unit = match[2].toLowerCase();
+  switch (unit) {
+    case "s": return val * 1000;
+    case "m": return val * 60 * 1000;
+    case "h": return val * 60 * 60 * 1000;
+    case "d": return val * 24 * 60 * 60 * 1000;
+    case "w": return val * 7 * 24 * 60 * 60 * 1000;
+    case "y": return val * 365 * 24 * 60 * 60 * 1000;
+    default: return defaultMs;
+  }
+};
+
+const getAccessTokenMaxAge = () =>
+  parseDurationToMs(jwtConfig.accessExpiresIn, 24 * 60 * 60 * 1000);
+const getRefreshTokenMaxAge = () =>
+  parseDurationToMs(jwtConfig.refreshExpiresIn, 7 * 24 * 60 * 60 * 1000);
 
 const getCookieOptions = (maxAge) => ({
   httpOnly: true,
@@ -50,9 +77,9 @@ const createAuthController = (services) => ({
     const { id, email, otp } = req.body;
     const result = await services.verifyOtp({ id, email, otp });
 
-    // Save tokens directly into HTTP-only cookies
-    res.cookie("accessToken", result.data.accessToken, getCookieOptions(15 * 60 * 1000));
-    res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(7 * 24 * 60 * 60 * 1000));
+    // Save tokens directly into HTTP-only cookies using duration from .env
+    res.cookie("accessToken", result.data.accessToken, getCookieOptions(getAccessTokenMaxAge()));
+    res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(getRefreshTokenMaxAge()));
 
     // Do NOT display tokens in the JSON response
     return response.success(res, result.message, { user: result.data.user });
@@ -72,9 +99,9 @@ const createAuthController = (services) => ({
     const token = req.cookies?.refreshToken || req.body?.refreshToken || req.headers["x-refresh-token"];
     const result = await services.refresh(token);
 
-    // Refresh cookies
-    res.cookie("accessToken", result.data.accessToken, getCookieOptions(15 * 60 * 1000));
-    res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(7 * 24 * 60 * 60 * 1000));
+    // Refresh cookies using duration from .env
+    res.cookie("accessToken", result.data.accessToken, getCookieOptions(getAccessTokenMaxAge()));
+    res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(getRefreshTokenMaxAge()));
 
     // Do NOT display tokens in the JSON response
     return response.success(res, result.message);

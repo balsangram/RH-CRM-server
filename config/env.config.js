@@ -45,10 +45,10 @@ export const RATE_LIMIT_WINDOW_MS = parseInt(process.env.RATE_LIMIT_WINDOW_MS ||
 export const RATE_LIMIT_MAX_REQUESTS = parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10);
 
 // AWS S3 Storage
-export const AWS_REGION = process.env.AWS_REGION || 'us-east-1';
-export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID || '';
-export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY || '';
-export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || 'rh-global-crm-storage';
+export const AWS_REGION = process.env.AWS_REGION || process.env.AWS_SES_REGION || 'us-east-1';
+export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID || process.env.AWS_SES_ACCESS_KEY || '';
+export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_SES_SECRET_KEY || '';
+export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || '';
 export const AWS_S3_CUSTOM_DOMAIN = process.env.AWS_S3_CUSTOM_DOMAIN || '';
 export const AWS_S3_SIGNED_URL_EXPIRES_IN = parseInt(
   process.env.AWS_S3_SIGNED_URL_EXPIRES_IN || '3600',
