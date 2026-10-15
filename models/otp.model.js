@@ -9,10 +9,14 @@ const otpSchema = new mongoose.Schema(
       trim: true,
       index: true,
     },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      default: null,
+    },
     userType: {
       type: String,
       required: true,
-      enum: ["super_admin", "staff", "company", "individual"],
+      enum: ["super_admin", "staff", "company", "individual", "traveler"],
     },
     otp: {
       type: String,

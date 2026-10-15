@@ -8,16 +8,25 @@ export const loginEmailSchema = Joi.object({
 });
 
 export const verifyOtpSchema = Joi.object({
-  email: Joi.string().email().required().messages({
+  id: Joi.string().messages({
+    'string.empty': 'ID cannot be empty',
+  }),
+  email: Joi.string().email().messages({
     'string.email': 'Please provide a valid email address',
-    'any.required': 'Email is required',
   }),
   otp: Joi.alternatives().try(Joi.string(), Joi.number()).required().messages({
     'any.required': 'OTP is required',
+  }),
+}).or('id', 'email');
+
+export const refreshTokenSchema = Joi.object({
+  refreshToken: Joi.string().optional().messages({
+    'string.empty': 'Refresh token cannot be empty',
   }),
 });
 
 export default {
   loginEmailSchema,
   verifyOtpSchema,
+  refreshTokenSchema,
 };

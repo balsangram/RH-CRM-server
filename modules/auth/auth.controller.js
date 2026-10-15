@@ -1,174 +1,178 @@
 import { asyncHandler } from "../../utils/async-handler.js";
-import { companyLogoutService, companyRefreshService, companySendOtpService, companyVerifyOtpService, individualLogoutService, individualRefreshService, individualSendOtpService, individualVerifyOtpService, staffLogoutService, staffRefreshService, staffSendOtpService, staffVerifyOtpService, superAdminLogoutService, superAdminRefreshService, superAdminSendOtpService, superAdminVerifyOtpService } from "./auth.service.js";
+import response from "../../utils/response.util.js";
+import {
+  superAdminSendOtpService,
+  superAdminVerifyOtpService,
+  superAdminLogoutService,
+  superAdminRefreshService,
+  staffSendOtpService,
+  staffVerifyOtpService,
+  staffLogoutService,
+  staffRefreshService,
+  companySendOtpService,
+  companyVerifyOtpService,
+  companyLogoutService,
+  companyRefreshService,
+  travelerSendOtpService,
+  travelerVerifyOtpService,
+  travelerLogoutService,
+  travelerRefreshService,
+  insiderSendOtpService,
+  insiderVerifyOtpService,
+  insiderLogoutService,
+  insiderRefreshService,
+  outsiderSendOtpService,
+  outsiderVerifyOtpService,
+  outsiderLogoutService,
+  outsiderRefreshService,
+} from "./auth.service.js";
 
+const isProduction = process.env.NODE_ENV === "production";
 
-export const superAdminSendOtp = asyncHandler(async (req, res) => {
-  try {
-    const { email } = req.body;
-    const result = await superAdminSendOtpService(email);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+const getCookieOptions = (maxAge) => ({
+  httpOnly: true,
+  secure: isProduction,
+  sameSite: isProduction ? "none" : "lax",
+  path: "/",
+  ...(maxAge ? { maxAge } : {}),
 });
 
-export const superAdminVerifyOtp = asyncHandler(async (req, res) => {
-  try {
-    const { id, otp } = req.body;
-    const result = await superAdminVerifyOtpService(id, otp);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+/**
+ * Controller helper to generate clean, standardized auth endpoints for any user role
+ */
+const createAuthController = (services) => ({
+  sendOtp: asyncHandler(async (req, res) => {
+    const result = await services.sendOtp(req.body.email);
+    return response.success(res, result.message, result.data);
+  }),
+
+  verifyOtp: asyncHandler(async (req, res) => {
+    const { id, email, otp } = req.body;
+    const result = await services.verifyOtp({ id, email, otp });
+
+    // Save tokens directly into HTTP-only cookies
+    res.cookie("accessToken", result.data.accessToken, getCookieOptions(15 * 60 * 1000));
+    res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(7 * 24 * 60 * 60 * 1000));
+
+    // Do NOT display tokens in the JSON response
+    return response.success(res, result.message, { user: result.data.user });
+  }),
+
+  logout: asyncHandler(async (req, res) => {
+    const result = await services.logout(req.user.id);
+
+    // Clear cookies upon logout
+    res.clearCookie("accessToken", getCookieOptions());
+    res.clearCookie("refreshToken", getCookieOptions());
+
+    return response.success(res, result.message);
+  }),
+
+  refresh: asyncHandler(async (req, res) => {
+    const token = req.cookies?.refreshToken || req.body?.refreshToken || req.headers["x-refresh-token"];
+    const result = await services.refresh(token);
+
+    // Refresh cookies
+    res.cookie("accessToken", result.data.accessToken, getCookieOptions(15 * 60 * 1000));
+    res.cookie("refreshToken", result.data.refreshToken, getCookieOptions(7 * 24 * 60 * 60 * 1000));
+
+    // Do NOT display tokens in the JSON response
+    return response.success(res, result.message);
+  }),
 });
 
-export const superAdminLogout = asyncHandler(async (req, res) => {
-  try {
-    const  id = req.user.id;
-    const result = await superAdminLogoutService(id);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-
+// ============================================================================
+// Super Admin Controllers
+// ============================================================================
+const superAdminController = createAuthController({
+  sendOtp: superAdminSendOtpService,
+  verifyOtp: superAdminVerifyOtpService,
+  logout: superAdminLogoutService,
+  refresh: superAdminRefreshService,
 });
 
-export const superAdminRefresh = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await superAdminRefreshService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+export const superAdminSendOtp = superAdminController.sendOtp;
+export const superAdminVerifyOtp = superAdminController.verifyOtp;
+export const superAdminLogout = superAdminController.logout;
+export const superAdminRefresh = superAdminController.refresh;
+
+// ============================================================================
+// Staff Controllers (SubAdmin)
+// ============================================================================
+const staffController = createAuthController({
+  sendOtp: staffSendOtpService,
+  verifyOtp: staffVerifyOtpService,
+  logout: staffLogoutService,
+  refresh: staffRefreshService,
 });
 
-// ================================
+export const staffSendOtp = staffController.sendOtp;
+export const staffVerifyOtp = staffController.verifyOtp;
+export const staffLogout = staffController.logout;
+export const staffRefresh = staffController.refresh;
 
-export const staffSendOtp = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await staffSendOtpService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+// ============================================================================
+// Company Controllers
+// ============================================================================
+const companyController = createAuthController({
+  sendOtp: companySendOtpService,
+  verifyOtp: companyVerifyOtpService,
+  logout: companyLogoutService,
+  refresh: companyRefreshService,
 });
 
+export const companySendOtp = companyController.sendOtp;
+export const companyVerifyOtp = companyController.verifyOtp;
+export const companyLogout = companyController.logout;
+export const companyRefresh = companyController.refresh;
 
-export const staffVerifyOtp = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await staffVerifyOtpService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+// ============================================================================
+// Traveler Controllers
+// ============================================================================
+const travelerController = createAuthController({
+  sendOtp: travelerSendOtpService,
+  verifyOtp: travelerVerifyOtpService,
+  logout: travelerLogoutService,
+  refresh: travelerRefreshService,
 });
 
+export const travelerSendOtp = travelerController.sendOtp;
+export const travelerVerifyOtp = travelerController.verifyOtp;
+export const travelerLogout = travelerController.logout;
+export const travelerRefresh = travelerController.refresh;
 
-export const staffLogout = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await staffLogoutService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+// Backward compatibility aliases for individual
+export const individualSendOtp = travelerSendOtp;
+export const individualVerifyOtp = travelerVerifyOtp;
+export const individualLogout = travelerLogout;
+export const individualRefresh = travelerRefresh;
+
+// ============================================================================
+// Insider Controllers (Super Admin & Staff)
+// ============================================================================
+const insiderController = createAuthController({
+  sendOtp: insiderSendOtpService,
+  verifyOtp: insiderVerifyOtpService,
+  logout: insiderLogoutService,
+  refresh: insiderRefreshService,
 });
 
+export const insiderSendOtp = insiderController.sendOtp;
+export const insiderVerifyOtp = insiderController.verifyOtp;
+export const insiderLogout = insiderController.logout;
+export const insiderRefresh = insiderController.refresh;
 
-export const staffRefresh = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await staffRefreshService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
+// ============================================================================
+// Outsider Controllers (Company & Traveler)
+// ============================================================================
+const outsiderController = createAuthController({
+  sendOtp: outsiderSendOtpService,
+  verifyOtp: outsiderVerifyOtpService,
+  logout: outsiderLogoutService,
+  refresh: outsiderRefreshService,
 });
 
-// ===========================================
-
-export const companySendOtp = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await companySendOtpService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-export const companyVerifyOtp = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await companyVerifyOtpService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-export const companyLogout = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await companyLogoutService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-export const companyRefresh = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await companyRefreshService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-
-// ======================================
-
-export const individualSendOtp = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await individualSendOtpService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-export const individualVerifyOtp = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await individualVerifyOtpService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-export const individualLogout = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await individualLogoutService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-export const individualRefresh = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const result = await individualRefreshService(email, password);
-    res.status(200).json(result);
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+export const outsiderSendOtp = outsiderController.sendOtp;
+export const outsiderVerifyOtp = outsiderController.verifyOtp;
+export const outsiderLogout = outsiderController.logout;
+export const outsiderRefresh = outsiderController.refresh;

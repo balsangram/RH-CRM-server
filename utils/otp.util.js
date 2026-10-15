@@ -23,7 +23,11 @@ export const hashOTP = (otp) => {
 
 
 export const verifyOTP = (plainOTP, hashedOTP) => {
+  if (!plainOTP || !hashedOTP) return false;
   const hash = hashOTP(plainOTP);
-  return crypto.timingSafeEqual(Buffer.from(hash), Buffer.from(hashedOTP));
+  const bufA = Buffer.from(hash);
+  const bufB = Buffer.from(hashedOTP);
+  if (bufA.length !== bufB.length) return false;
+  return crypto.timingSafeEqual(bufA, bufB);
 };
 
