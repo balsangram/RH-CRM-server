@@ -138,6 +138,15 @@ const visaPackageSchema = new Schema(
       type: [String],
       default: [],
     },
+    document: {
+      type: String,
+      default: "",
+      trim: true, // e.g. URL to downloadable visa checklist, guideline PDF or form
+    },
+    documents: {
+      type: [String],
+      default: [], // e.g. list of document/PDF attachment URLs
+    },
     validityPeriod: {
       type: String,
       required: true,

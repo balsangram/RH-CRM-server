@@ -49,8 +49,9 @@ router.post(
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   uploadS3Fields(
     [
+      { name: "coverImage", maxCount: 1 },
       { name: "image", maxCount: 1 },
-      { name: "images", maxCount: 10 },
+      { name: "images", maxCount: 15 },
     ],
     "holidays"
   ),
@@ -64,8 +65,9 @@ router.patch(
   authorize(Roles.SUPER_ADMIN, Roles.STAFF),
   uploadS3Fields(
     [
+      { name: "coverImage", maxCount: 1 },
       { name: "image", maxCount: 1 },
-      { name: "images", maxCount: 10 },
+      { name: "images", maxCount: 15 },
     ],
     "holidays"
   ),

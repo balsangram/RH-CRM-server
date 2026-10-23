@@ -19,6 +19,40 @@ const companySchema = new mongoose.Schema(
       default: null,
       trim: true,
     },
+    address: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+    logo: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    contactPersonName: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    regDetails: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    country: {
+      type: String,
+      default: null,
+      trim: true,
+      index: true,
+    },
     accessToken: {
       type: String,
       default: null,

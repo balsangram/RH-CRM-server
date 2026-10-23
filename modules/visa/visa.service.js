@@ -213,10 +213,21 @@ export const createPackageService = async (data) => {
   // Auto-fill country name, code, and sync visaCategory/visaType
   const visaCategory = data.visaCategory || data.visaType || "General Visa";
   const visaType = data.visaType || data.visaCategory || "General Visa";
+
+  let document = data.document || "";
+  let documents = Array.isArray(data.documents) ? data.documents : [];
+  if (document && documents.length === 0) {
+    documents = [document];
+  } else if (!document && documents.length > 0) {
+    document = documents[0];
+  }
+
   const packagePayload = {
     ...data,
     visaCategory,
     visaType,
+    document,
+    documents,
     countryName: country.countryName,
     countryCode: country.countryCode,
   };
@@ -282,6 +293,16 @@ export const updatePackageService = async (id, updateData) => {
     }
     updateData.countryName = country.countryName;
     updateData.countryCode = country.countryCode;
+  }
+
+  if (updateData.document || updateData.documents) {
+    let document = updateData.document || "";
+    let documents = Array.isArray(updateData.documents) ? updateData.documents : [];
+    if (document && documents.length === 0) {
+      updateData.documents = [document];
+    } else if (!document && documents.length > 0) {
+      updateData.document = documents[0];
+    }
   }
 
   const updated = await updatePackage(id, updateData);

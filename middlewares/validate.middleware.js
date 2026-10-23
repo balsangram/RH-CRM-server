@@ -23,7 +23,16 @@ const validate = (schema, source = 'body') => {
       return next(new BadRequestError('Validation Error', details));
     }
 
-    req[source] = value;
+    try {
+      req[source] = value;
+    } catch {
+      Object.defineProperty(req, source, {
+        value,
+        writable: true,
+        configurable: true,
+        enumerable: true,
+      });
+    }
     next();
   };
 };

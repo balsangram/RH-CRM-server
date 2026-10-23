@@ -49,7 +49,8 @@ const visaApplicationSchema = new mongoose.Schema(
     },
     caseOfficer: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "SubAdmin",
+      default: null,
     },
     applicationDate: {
       type: Date,

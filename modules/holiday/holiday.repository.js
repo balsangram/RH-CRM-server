@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import HolidayPackage from "../../models/holidayPackage.model.js";
 
 export const createHolidayPackage = async (data) => {
@@ -5,7 +6,16 @@ export const createHolidayPackage = async (data) => {
 };
 
 export const findHolidayPackageById = async (id) => {
-  return await HolidayPackage.findById(id);
+  if (mongoose.isValidObjectId(id)) {
+    const pkg = await HolidayPackage.findById(id);
+    if (pkg) return pkg;
+  }
+  return await HolidayPackage.findOne({
+    $or: [
+      { packageId: id.toString().trim() },
+      { packageName: new RegExp(`^${id.toString().trim()}$`, "i") },
+    ],
+  });
 };
 
 export const findHolidayPackageByPackageId = async (packageId) => {

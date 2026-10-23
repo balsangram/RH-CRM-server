@@ -106,7 +106,7 @@ export const findPackagesByCountry = async (countryId, countryCode, filter = {})
 
   return await VisaPackage.find(query)
     .select(
-      "_id country countryName countryCode packageName visaCategory visaType image validityPeriod permittedStayDuration standardProcessingTime embassyStatus estimatedCost costBreakdown isActive createdAt updatedAt"
+      "_id country countryName countryCode packageName visaCategory visaType image sideImages document documents validityPeriod permittedStayDuration standardProcessingTime embassyStatus estimatedCost costBreakdown isActive createdAt updatedAt"
     )
     .sort({ createdAt: -1 });
 };

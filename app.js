@@ -11,6 +11,8 @@ import NotFoundError from './shared/errors/not-found.error.js';
 import authRoutes from './modules/auth/auth.routes.js';
 import holidayRoutes from './modules/holiday/holiday.routes.js';
 import visaRoutes from './modules/visa/visa.routes.js';
+import companyRoutes from './modules/companies/company.routes.js';
+import rolePermissionRoutes from './modules/roles-permissions/role-permission.routes.js';
 
 const app = express();
 
@@ -63,6 +65,8 @@ app.get(appConfig.apiPrefix, (req, res) => {
 app.use(`${appConfig.apiPrefix}/auth`, authRoutes);
 app.use(`${appConfig.apiPrefix}/holiday`, holidayRoutes);
 app.use(`${appConfig.apiPrefix}/visa`, visaRoutes);
+app.use(`${appConfig.apiPrefix}/company`, companyRoutes);
+app.use(`${appConfig.apiPrefix}/roles-permissions`, rolePermissionRoutes);
 // app.use(`${appConfig.apiPrefix}/applications`, applicationRoutes);
 // etc.
 

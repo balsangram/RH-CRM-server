@@ -112,6 +112,8 @@ router.post(
         [
             { name: "image", maxCount: 1 },
             { name: "sideImages", maxCount: 10 },
+            { name: "document", maxCount: 1 },
+            { name: "documents", maxCount: 10 },
             { name: "visaType", maxCount: 10 },
         ],
         "visas"
@@ -127,6 +129,8 @@ router.patch(
         [
             { name: "image", maxCount: 1 },
             { name: "sideImages", maxCount: 10 },
+            { name: "document", maxCount: 1 },
+            { name: "documents", maxCount: 10 },
             { name: "visaType", maxCount: 10 },
         ],
         "visas"

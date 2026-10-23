@@ -326,7 +326,7 @@ export const travelerVerifyOtpService = (payload, otp) => {
     ...data,
     Model: Traveler,
     userType: "traveler",
-    role: Roles.INDIVIDUAL,
+    role: Roles.TRAVELER,
     displayName: "Traveler",
     autoCreate: true,
   });
@@ -336,7 +336,7 @@ export const travelerLogoutService = (userId) =>
   logoutForUser({ userId, Model: Traveler, displayName: "Traveler" });
 
 export const travelerRefreshService = (refreshToken) =>
-  refreshForUser({ refreshToken, Model: Traveler, userType: "traveler", role: Roles.INDIVIDUAL, displayName: "Traveler" });
+  refreshForUser({ refreshToken, Model: Traveler, userType: "traveler", role: Roles.TRAVELER, displayName: "Traveler" });
 
 // Backward compatibility aliases
 export const individualSendOtpService = travelerSendOtpService;
@@ -356,7 +356,7 @@ export const INSIDER_CONFIGS = [
 // Outsider Portal: Company and Traveler
 export const OUTSIDER_CONFIGS = [
   { Model: Company, userType: "company", role: Roles.COMPANY, displayName: "Company" },
-  { Model: Traveler, userType: "traveler", role: Roles.INDIVIDUAL, displayName: "Traveler", autoCreate: true },
+  { Model: Traveler, userType: "traveler", role: Roles.TRAVELER, displayName: "Traveler", autoCreate: true },
 ];
 
 /**

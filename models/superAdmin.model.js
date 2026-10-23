@@ -19,6 +19,11 @@ const superAdminSchema = new mongoose.Schema(
       default: null,
       trim: true,
     },
+    profileImage: {
+      type: String,
+      default: null,
+      trim: true,
+    },
     accessToken: {
       type: String,
       default: null,

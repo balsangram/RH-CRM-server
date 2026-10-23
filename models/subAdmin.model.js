@@ -19,6 +19,51 @@ const subAdminSchema = new mongoose.Schema(
       default: null,
       trim: true,
     },
+    profileImage: {
+      type: String,
+      default: null,
+      trim: true,
+    },
+    role: {
+      type: String,
+      default: "STAFF",
+      trim: true,
+    },
+    permissions: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+    status: {
+      type: String,
+      enum: ["active", "inactive"],
+      default: "active",
+      index: true,
+    },
+    assignedApplications: [
+      {
+        applicationType: {
+          type: String,
+          enum: ["booking", "visa"],
+          required: true,
+        },
+        applicationId: {
+          type: mongoose.Schema.Types.ObjectId,
+          required: true,
+          refPath: "assignedApplications.applicationModel",
+        },
+        applicationModel: {
+          type: String,
+          enum: ["BookingApplication", "VisaApplication"],
+          required: true,
+        },
+        assignedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
     accessToken: {
       type: String,
       default: null,

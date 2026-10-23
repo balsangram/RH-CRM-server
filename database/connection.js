@@ -17,6 +17,18 @@ export const connectDB = async () => {
       logger.info('Mongoose debug mode enabled');
     }
 
+    mongoose.connection.on('disconnected', () => {
+      logger.warn('MongoDB disconnected. Waiting for auto-reconnection...');
+    });
+
+    mongoose.connection.on('reconnected', () => {
+      logger.info('MongoDB reconnected successfully.');
+    });
+
+    mongoose.connection.on('error', (err) => {
+      logger.error(`MongoDB connection error: ${err.message}`);
+    });
+
     const conn = await mongoose.connect(dbConfig.uri, dbConfig.options);
     logger.info(`MongoDB Connected: ${conn.connection.host}`);
     return conn;

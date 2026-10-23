@@ -58,6 +58,11 @@ const bookingApplicationSchema = new mongoose.Schema(
       type: String,
       trim: true,
     },
+    assignedStaff: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubAdmin",
+      default: null,
+    },
 
     // Booking Application Status
     status: {
