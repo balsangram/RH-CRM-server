@@ -41,12 +41,12 @@ export const isS3Configured = () => {
 };
 
 /**
- * Create S3 Multer storage engine
+ * Create S3 Multer storage engine for direct upload to AWS S3
  */
 const createS3Storage = (folderPrefix = "uploads") => {
   return multerS3({
     s3: s3Client,
-    bucket: storageConfig.bucket,
+    bucket: (req, file, cb) => cb(null, storageConfig.bucket),
     contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: (req, file, cb) => {
       cb(null, {
@@ -66,36 +66,10 @@ const createS3Storage = (folderPrefix = "uploads") => {
 };
 
 /**
- * Create Local Disk Multer storage engine (fallback when S3 credentials not provided in dev)
- */
-const createDiskStorage = (folderPrefix = "uploads") => {
-  const uploadDir = path.join(process.cwd(), "uploads", folderPrefix);
-  if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-  }
-
-  return multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-      const sanitized = file.originalname.replace(/\s+/g, "-").toLowerCase();
-      const ext = path.extname(sanitized);
-      const nameWithoutExt = path.basename(sanitized, ext);
-      const uniqueFilename = `${nameWithoutExt}-${Date.now()}-${Math.round(Math.random() * 1e9)}${ext}`;
-      cb(null, uniqueFilename);
-    },
-  });
-};
-
-/**
- * Get configured multer storage instance (S3 preferred, disk fallback)
+ * Get S3 multer storage instance (direct S3 upload)
  */
 export const getStorageEngine = (folderPrefix = "uploads") => {
-  if (isS3Configured()) {
-    return createS3Storage(folderPrefix);
-  }
-  return createDiskStorage(folderPrefix);
+  return createS3Storage(folderPrefix);
 };
 
 /**
@@ -113,11 +87,6 @@ export const getFileUrl = (file, folderPrefix = "uploads") => {
     return storageConfig.customDomain
       ? `${storageConfig.customDomain}/${file.key}`
       : `https://${storageConfig.bucket}.s3.${storageConfig.region}.amazonaws.com/${file.key}`;
-  }
-  // Local disk fallback:
-  if (file.filename) {
-    const baseUrl = appConfig.appUrl || `http://localhost:${appConfig.port || 5000}`;
-    return `${baseUrl}/uploads/${folderPrefix}/${file.filename}`;
   }
   return null;
 };
@@ -207,12 +176,20 @@ export const uploadS3Image = (fieldName = "image", folderPrefix = "uploads") => 
       return next();
     }
 
+    if (!isS3Configured()) {
+      return next(
+        new BadRequestError(
+          "AWS S3 is not properly configured. Please check AWS_S3_BUCKET_NAME and AWS credentials in .env."
+        )
+      );
+    }
+
     upload(req, res, (err) => {
       if (err) {
         if (err.name === "NoSuchBucket" || err.Code === "NoSuchBucket") {
           return next(
             new BadRequestError(
-              `AWS S3 bucket '${storageConfig.bucket}' does not exist in region '${storageConfig.region}'. Please add AWS_S3_BUCKET_NAME=<your-bucket> in .env or leave it blank to store files locally.`
+              `AWS S3 bucket '${storageConfig.bucket}' does not exist in region '${storageConfig.region}'. Please check AWS_S3_BUCKET_NAME in .env.`
             )
           );
         }
@@ -247,12 +224,20 @@ export const uploadS3Fields = (fields = [], folderPrefix = "uploads") => {
       return next();
     }
 
+    if (!isS3Configured()) {
+      return next(
+        new BadRequestError(
+          "AWS S3 is not properly configured. Please check AWS_S3_BUCKET_NAME and AWS credentials in .env."
+        )
+      );
+    }
+
     upload(req, res, (err) => {
       if (err) {
         if (err.name === "NoSuchBucket" || err.Code === "NoSuchBucket") {
           return next(
             new BadRequestError(
-              `AWS S3 bucket '${storageConfig.bucket}' does not exist in region '${storageConfig.region}'. Please add AWS_S3_BUCKET_NAME=<your-bucket> in .env or leave it blank to store files locally.`
+              `AWS S3 bucket '${storageConfig.bucket}' does not exist in region '${storageConfig.region}'. Please check AWS_S3_BUCKET_NAME in .env.`
             )
           );
         }

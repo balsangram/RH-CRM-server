@@ -45,7 +45,7 @@ export const updateStaffRole = asyncHandler(async (req, res) => {
 });
 
 /**
- * Deactivate / delete a staff role
+ * Permanently delete a staff role from the database
  */
 export const deleteStaffRole = asyncHandler(async (req, res) => {
   const result = await deleteStaffRoleService(req.params.id);

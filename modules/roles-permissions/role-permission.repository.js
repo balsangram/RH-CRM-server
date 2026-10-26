@@ -55,11 +55,14 @@ export const updateStaffById = async (id, updateData) => {
 };
 
 export const deleteStaffById = async (id) => {
-  return await SubAdmin.findByIdAndUpdate(
-    id,
-    { status: "inactive" },
-    { new: true }
-  ).select(EXCLUDE_TOKENS);
+  return await SubAdmin.findByIdAndDelete(id).select(EXCLUDE_TOKENS);
+};
+
+export const unassignStaffFromApplications = async (staffId) => {
+  return await Promise.all([
+    BookingApplication.updateMany({ assignedStaff: staffId }, { $set: { assignedStaff: null } }),
+    VisaApplication.updateMany({ caseOfficer: staffId }, { $set: { caseOfficer: null } }),
+  ]);
 };
 
 // ============================================================================
@@ -134,6 +137,7 @@ export default {
   createStaff,
   updateStaffById,
   deleteStaffById,
+  unassignStaffFromApplications,
   findBookingApplicationById,
   findVisaApplicationById,
   updateBookingApplicationById,

@@ -19,11 +19,51 @@ const app = express();
 // Security HTTP headers
 app.use(helmet());
 
-// Enable CORS with credentials for cookies
+// Whitelist default frontend development ports and any configured origins
+const defaultOrigins = [
+  'http://localhost:3000',
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://localhost:5176',
+  'http://127.0.0.1:3000',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
+  'http://127.0.0.1:5175',
+  'http://127.0.0.1:5176',
+];
+
+const configuredOrigins = Array.isArray(appConfig.allowedOrigins)
+  ? appConfig.allowedOrigins
+  : (appConfig.frontendUrl || '')
+      .split(',')
+      .map((u) => u.trim().replace(/\/+$/, ''))
+      .filter(Boolean);
+
+const allowedOrigins = Array.from(new Set([...defaultOrigins, ...configuredOrigins]));
+
+// Enable CORS with credentials for cookies and multiple allowed origins
 app.use(
   cors({
-    origin: appConfig.frontendUrl || '*',
+    origin: (origin, callback) => {
+      // Allow requests with no origin (e.g. mobile apps, curl, Postman)
+      if (!origin) return callback(null, true);
+
+      // Check against allowed origins list
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // In development, also allow any localhost/127.0.0.1 port (e.g. 5173, 5174, 5175, etc.)
+      if (!appConfig.isProduction && /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(null, false);
+    },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'],
   })
 );
 
@@ -34,8 +74,6 @@ app.use(cookieParser());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Static uploads serving
-app.use('/uploads', express.static('uploads'));
 
 // HTTP Request logging
 app.use(requestLogger);

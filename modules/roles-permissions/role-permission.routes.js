@@ -47,6 +47,7 @@ router.patch(
   validate(updateStaffRoleSchema),
   updateStaffRole
 );
+
 router.delete("/:id", deleteStaffRole);
 
 // ============================================================================

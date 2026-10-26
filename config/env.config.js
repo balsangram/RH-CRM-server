@@ -13,7 +13,14 @@ export const PORT = parseInt(process.env.PORT || '5000', 10);
 export const API_PREFIX = process.env.API_PREFIX || '/api/v1';
 export const APP_NAME = process.env.APP_NAME || 'RH Global CRM';
 export const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
-export const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:3000';
+export const FRONTEND_URL = process.env.FRONTEND_URL || 'http://localhost:5174';
+export const ALLOWED_ORIGINS = (
+  process.env.FRONTEND_URL ||
+  'http://localhost:3000,http://localhost:5173,http://localhost:5174,http://localhost:5175'
+)
+  .split(',')
+  .map((url) => url.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
 
 // Environment Helpers
 export const IS_PRODUCTION = NODE_ENV === 'production';
@@ -48,7 +55,11 @@ export const RATE_LIMIT_MAX_REQUESTS = parseInt(process.env.RATE_LIMIT_MAX_REQUE
 export const AWS_REGION = process.env.AWS_REGION || process.env.AWS_SES_REGION || 'us-east-1';
 export const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID || process.env.AWS_SES_ACCESS_KEY || '';
 export const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY || process.env.AWS_SES_SECRET_KEY || '';
-export const AWS_S3_BUCKET_NAME = process.env.AWS_S3_BUCKET_NAME || '';
+export const AWS_S3_BUCKET_NAME =
+  process.env.AWS_S3_BUCKET_NAME ||
+  process.env.AWS_BUCKET_NAME ||
+  process.env.AWS_SES_FROM_NAME ||
+  '';
 export const AWS_S3_CUSTOM_DOMAIN = process.env.AWS_S3_CUSTOM_DOMAIN || '';
 export const AWS_S3_SIGNED_URL_EXPIRES_IN = parseInt(
   process.env.AWS_S3_SIGNED_URL_EXPIRES_IN || '3600',
@@ -92,6 +103,7 @@ export const appEnv = {
   appName: APP_NAME,
   appUrl: APP_URL,
   frontendUrl: FRONTEND_URL,
+  allowedOrigins: ALLOWED_ORIGINS,
   isProduction: IS_PRODUCTION,
   isDevelopment: IS_DEVELOPMENT,
   isTest: IS_TEST,

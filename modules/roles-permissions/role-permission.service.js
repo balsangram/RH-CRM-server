@@ -9,6 +9,7 @@ import {
   createStaff,
   updateStaffById,
   deleteStaffById,
+  unassignStaffFromApplications,
   findBookingApplicationById,
   findVisaApplicationById,
   updateBookingApplicationById,
@@ -118,10 +119,13 @@ export const deleteStaffRoleService = async (id) => {
     throw new NotFoundError("Staff member not found");
   }
 
-  const deactivated = await deleteStaffById(id);
+  // Clear assigned applications for this staff member
+  await unassignStaffFromApplications(id);
+
+  const deletedStaff = await deleteStaffById(id);
   return {
-    message: "Staff role deactivated successfully",
-    data: deactivated,
+    message: "Staff member deleted successfully",
+    data: deletedStaff,
   };
 };
 

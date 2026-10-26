@@ -25,13 +25,10 @@ node_modules/
 .env.test.local
 .env.production.local
 
-# Local uploads (if any temporary local fallback files exist)
-uploads/temp/*
-!uploads/temp/.gitkeep
-uploads/documents/*
-!uploads/documents/.gitkeep
-uploads/visas/*
-!uploads/visas/.gitkeep
+# Uploads
+uploads/*
+!uploads/.gitkeep
+!uploads/*/.gitkeep
 
 # Operating System files
 .DS_Store
