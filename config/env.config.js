@@ -32,8 +32,8 @@ export const MONGODB_URI_DEV = process.env.MONGODB_URI_DEV || '';
 export const MONGODB_URI_PROD = process.env.MONGODB_URI_PROD || '';
 export const MONGOOSE_DEBUG = process.env.MONGOOSE_DEBUG === 'true';
 export const MONGODB_URI =
-  (IS_PRODUCTION ? MONGODB_URI_PROD : MONGODB_URI_DEV) ||
   process.env.MONGODB_URI ||
+  (IS_PRODUCTION ? (MONGODB_URI_PROD || MONGODB_URI_DEV) : (MONGODB_URI_DEV || MONGODB_URI_PROD)) ||
   'mongodb://localhost:27017/rh_global_crm';
 
 // SuperAdmin Seeder

@@ -81,6 +81,19 @@ app.use(requestLogger);
 // Global Rate Limiting
 app.use(appConfig.apiPrefix, rateLimiter);
 
+// Favicon handlers
+app.get(['/favicon.ico', '/favicon.png'], (req, res) => res.status(204).end());
+
+// Root Welcome endpoint
+app.get('/', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: `Welcome to ${appConfig.appName} API`,
+    version: '1.0.0',
+    apiPrefix: appConfig.apiPrefix,
+  });
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({
